@@ -2,6 +2,7 @@ package com.flink.eventTime
 
 import org.apache.flink.api.java.tuple.Tuple
 import org.apache.flink.api.java.utils.ParameterTool
+import org.apache.flink.streaming.api.TimeCharacteristic
 import org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor
 import org.apache.flink.streaming.api.scala.{DataStream, KeyedStream, StreamExecutionEnvironment, WindowedStream}
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
@@ -19,6 +20,9 @@ object FlinkTumblingEventTimeWindow {
   def main(args: Array[String]): Unit = {
     val tools: ParameterTool = ParameterTool.fromArgs(args);
     val see: StreamExecutionEnvironment = StreamExecutionEnvironment.getExecutionEnvironment
+    see.setStreamTimeCharacteristic(TimeCharacteristic.EventTime)
+    see.setParallelism(1)
+
     val host = tools.get("host")
     val port = tools.get("port").toInt
     val stream: DataStream[String] = see.socketTextStream(host, port)
